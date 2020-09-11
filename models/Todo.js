@@ -3,7 +3,7 @@ var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 
 var TodoSchema = new Schema({
-    title: { type: String, max: 40 },
+    title: { type: String, max: 50, required: true },
     priority: { type: Boolean, default: false },
     notes: { type: String, max: 240 },
     isDone: { type: Boolean, default: false},
