@@ -9,6 +9,9 @@ var todos_controller = require("../controllers/todosController");
 router.get("/:userid", auth.verifyToken, todos_controller.todos_get);
 
 /* handle todo submit on POST */
-router.post("/", auth.verifyToken, todos_controller.todo_post)
+router.post("/", auth.verifyToken, todos_controller.todo_post);
+
+/* handle todo update on POST */
+router.post("/:todoid/update", auth.verifyToken, todos_controller.todo_update);
 
 module.exports = router;

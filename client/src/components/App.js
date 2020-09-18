@@ -68,7 +68,9 @@ class App extends React.Component {
     }
 
     //update selectedTodo on backend if changed
-
+    if (this.state.updateBackend && this.state.selectedTodo !== prevState.selectedTodo) {
+      this.postTodoUpdate(prevState.selectedTodo);
+    };
   };
   fetchTodos() {
     const requestOptions = {
@@ -110,8 +112,6 @@ class App extends React.Component {
     if (!this.state.user) {
       this.setState({todos});
     } else {
-
-      //TODO: Fetch request if user is logged in
       const requestOptions = {
         method: "POST",
         headers: {
@@ -147,6 +147,7 @@ class App extends React.Component {
     //check if todo item is a subtask
     const target = todo.subTasks ? todos[todos.indexOf(todo)]: todos[todos.indexOf(this.state.selectedTodo)].subTasks[todos[todos.indexOf(this.state.selectedTodo)].subTasks.indexOf(todo)];
     target.isDone = !target.isDone;
+    if (this.state.user) this.postTodoUpdate(target);
     this.setState({todos});
   };
   handleTodoUpdate(e) {
@@ -164,6 +165,29 @@ class App extends React.Component {
       updateBackend: updateBackend,
     });
   };
+  postTodoUpdate(todo) {
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: "Bearer " + this.state.jwt,
+      },
+      body: JSON.stringify({
+        todo: todo,
+      }),
+    };
+
+    fetch("/todos/" + todo._id + "/update", requestOptions)
+      .then(res => res.json())
+      .then(res => {
+        if (!res.success) {
+          console.log(res.message)
+        } else {
+          this.setState({updateBackend: null});
+          this.fetchTodos();
+        }
+      });
+  }
   handleSubTaskSubmit(title) {
     let todos = [...this.state.todos];
     const subTask = {

@@ -18,6 +18,14 @@ exports.todos_get = (req, res, next) => {
 };
 
 exports.todo_post = (req, res, next) => {
+
+    // Validate fields.
+    body('title', 'Title must not be empty.').trim().isLength({ min: 1 }),
+
+    // Sanitize fields.
+    sanitizeBody('title').escape(),
+    sanitizeBody('notes').escape(),
+
     User.findById(req.body.user._id)
         .select('todos')
         .exec((err, theUser) => {
@@ -44,4 +52,34 @@ exports.todo_post = (req, res, next) => {
                 }
             }
         })
+};
+
+exports.todo_update = (req, res, next) => {
+    // Validate fields.
+    body('title', 'Title must not be empty.').trim().isLength({ min: 1 }),
+
+    // Sanitize fields.
+    sanitizeBody('title').escape(),
+    sanitizeBody('notes').escape();
+    
+    const original_todo = Todo.findById(req.params.todoid)
+
+    const todo = new Todo({
+        _id: req.params.todoid,
+        title: req.body.todo.title,
+        notes: req.body.todo.notes,
+        priority: req.body.todo.priority,
+        isDone: req.body.todo.isDone,
+        date: req.body.todo.date,
+        subTasks: req.body.todo.subTasks,
+    })
+
+    if (todo === original_todo) {
+        res.json({success: false, message: "no change necessary"});
+    } else {
+        Todo.findByIdAndUpdate(req.params.todoid, todo, err => {
+            if (err) res.json({success: false, err: err});
+            else res.json({success: true, message: "todo updated"});
+        })
+    }
 }
