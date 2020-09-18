@@ -42,7 +42,12 @@ class TodoItem extends React.Component {
             <div className="todo-item-container" onClick={this.handleClick.bind(this)}>
                 <div className="todo-item">
                     <div className={checkboxClass} onClick={this.handleCheckboxClick.bind(this)}>
-                        {this.state.isDone ? <FontAwesomeIcon icon={faCheckCircle} className="fa-check" /> : null}
+                        {this.state.isDone 
+                            ? <FontAwesomeIcon 
+                                icon={faCheckCircle} 
+                                className="fa-check" 
+                            /> 
+                            : null}
                     </div>
                     <div className={titleClassList}>{this.props.todo.title}</div>
                 </div>

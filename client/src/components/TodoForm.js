@@ -55,10 +55,25 @@ class TodoForm extends React.Component {
             <ClickAwayListener onClickAway={this.handleClickAway.bind(this)}>
                 <div className="todo-form overlay-form">
                     <Priority class={priorityClass} onClick={this.togglePriority.bind(this)} />
-                    <TextareaAutosize onChange={this.handleTitleInputChange.bind(this)} maxLength={50} className="text-area-autosize todo-form-title" placeholder="I need to..." />
+                    <TextareaAutosize 
+                        onChange={this.handleTitleInputChange.bind(this)} 
+                        maxLength={50} 
+                        className="text-area-autosize todo-form-title" 
+                        placeholder="I need to..." 
+                    />
                     <div className="notes-title sub-title">NOTES</div>
-                    <TextareaAutosize onChange={this.handleNotesInputChange.bind(this)} maxLength={240} placeholder="Insert your notes here" className="text-area-autosize todo-item-notes todo-form-notes"></TextareaAutosize>
-                    <div onClick={this.handleFormSubmit.bind(this)} className={"todo-form-footer" + footerClass}>Add Todo</div>
+                    <TextareaAutosize 
+                        onChange={this.handleNotesInputChange.bind(this)} 
+                        maxLength={240} 
+                        placeholder="Insert your notes here" 
+                        className="text-area-autosize todo-item-notes todo-form-notes" 
+                    />
+                    <div 
+                    onClick={this.handleFormSubmit.bind(this)} 
+                    className={"todo-form-footer" + footerClass}
+                    >
+                        Add Todo
+                    </div>
                 </div>
             </ClickAwayListener>
         )

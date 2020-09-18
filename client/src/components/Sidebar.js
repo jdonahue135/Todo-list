@@ -20,7 +20,10 @@ class Sidebar extends React.Component {
         const todoLists = ["All Tasks", "Priority"];
         return (
             <div className="sidebar">
-                <Button text="New Todo" onClick={this.props.onNewTodo}/>
+                <Button 
+                    text="New Todo" 
+                    onClick={this.props.onNewTodo}
+                />
                 <div className="sidebar-content-container">
                     <div className="headline">Projects</div>
                     <div className="project-list">

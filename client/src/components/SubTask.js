@@ -35,7 +35,14 @@ class SubTask extends React.Component {
             <div className="todo-item-container">
                 <div className="todo-item">
                     <div className="checkbox" />
-                    <TextareaAutosize className="text-area-autosize sub-task-form" placeholder="Add a new subtask" onChange={this.handleInputChange.bind(this)} value={this.state.titleInput} onBlur={this.handleBlur.bind(this)} onKeyDown={this.handleKeyDown.bind(this)}/>
+                    <TextareaAutosize 
+                        className="text-area-autosize sub-task-form" 
+                        placeholder="Add a new subtask" 
+                        onChange={this.handleInputChange.bind(this)} 
+                        value={this.state.titleInput} 
+                        onBlur={this.handleBlur.bind(this)} 
+                        onKeyDown={this.handleKeyDown.bind(this)}
+                    />
                 </div>
             </div>
         )

@@ -23,7 +23,12 @@ const TodoList = (props) => {
             <div className="todo-title">{todoLists[props.selectedList]}</div>
             <div className="todo-list">
                 {props.todos ? todos.map(todo => (
-                    <TodoItem onStatusChange={props.onStatusChange} onClick={props.onTodoClick} key={todos.indexOf(todo)} todo={todo}/>
+                    <TodoItem 
+                        onStatusChange={props.onStatusChange} 
+                        onClick={props.onTodoClick} 
+                        key={todos.indexOf(todo)} 
+                        todo={todo}
+                    />
                 )): null}
             </div>
         </div>

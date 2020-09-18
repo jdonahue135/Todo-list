@@ -24,6 +24,7 @@ class App extends React.Component {
       jwt: null,
       usernameInput: "",
       passwordInput: "",
+      showLoginWarning: null,
       updateBackend: false,
     };
   };
@@ -234,12 +235,17 @@ class App extends React.Component {
       };
     fetch("/users/signup", requestOptions)
       .then((res) => res.json())
-      .then((res) =>
-        this.setState({
-          jwt: res.token,
-          user: res.user,
-          showSignUpForm: false,
-        })
+      .then((res) => {
+        if (res.success) {
+          this.setState({
+            jwt: res.token,
+            user: res.user,
+            showSignUpForm: false,
+          })
+        } else {
+          this.setState({showLoginWarning: true})
+        }
+      }
       )
       .catch((err) => console.log(err));
   };
@@ -264,23 +270,45 @@ class App extends React.Component {
       <div className="App">
         {this.state.showOverlay 
           ? <div>
-              <TodoForm onSubmit={this.handleFormSubmit.bind(this)} onClickAway={this.toggleOverlay.bind(this)}/>
+              <TodoForm 
+                onSubmit={this.handleFormSubmit.bind(this)} 
+                onClickAway={this.toggleOverlay.bind(this)}
+              />
               <div className="overlay" />
             </div> 
           : null}
         {this.state.showLogInForm 
           ? <div>
-              <LogIn onInputChange={this.handleInputChange.bind(this)} handleCancel={this.handleCancelClick.bind(this)} signUp={false} onSubmit={this.handleLogIn.bind(this)} buttonEnabled={isButtonEnabled}/>
+              <LogIn 
+                onInputChange={this.handleInputChange.bind(this)} 
+                handleCancel={this.handleCancelClick.bind(this)} 
+                signUp={false} 
+                onSubmit={this.handleLogIn.bind(this)} 
+                buttonEnabled={isButtonEnabled} 
+                warning={this.state.showLoginWarning}
+              />
               <div className="overlay" />
             </div> 
           : null}
           {this.state.showSignUpForm 
           ? <div>
-              <LogIn onInputChange={this.handleInputChange.bind(this)} handleCancel={this.handleCancelClick.bind(this)} signUp={true} onSubmit={this.handleSignUp.bind(this)} buttonEnabled={isButtonEnabled}/>
+              <LogIn 
+                onInputChange={this.handleInputChange.bind(this)} 
+                handleCancel={this.handleCancelClick.bind(this)} 
+                signUp={true} 
+                onSubmit={this.handleSignUp.bind(this)} 
+                buttonEnabled={isButtonEnabled}
+              />
               <div className="overlay" />
             </div> 
           : null}
-        <Sidebar user={isLoggedIn} handleLogOut={this.handleLogOut.bind(this)} onListChange={this.handleListChange.bind(this)} selected={this.state.selectedList} onNewTodo={this.toggleOverlay.bind(this)}/>
+        <Sidebar 
+          user={isLoggedIn} 
+          handleLogOut={this.handleLogOut.bind(this)} 
+          onListChange={this.handleListChange.bind(this)} 
+          selected={this.state.selectedList} 
+          onNewTodo={this.toggleOverlay.bind(this)}
+        />
         <div className="background-container">
           <img className="background" src={background} alt="background" />
         </div>
@@ -289,11 +317,23 @@ class App extends React.Component {
             <div className="title">{this.state.user ? "Welcome, " + this.state.user.username : <div><span className="link" id="log-in" onClick={this.handleAccountClick.bind(this)}>Log in</span> or <span className="link" id="sign-up" onClick={this.handleAccountClick.bind(this)}>Sign up</span> to save todos</div>}</div>
           </div>
           <div className="content">
-            <TodoList selectedList={this.state.selectedList} onTodoClick={this.handleSelectedTodo.bind(this)} todos={this.state.todos} onStatusChange={this.handleTodoStatusToggle.bind(this)} />
-            {this.state.selectedTodo ? <TodoDetail todo={this.state.selectedTodo} onChange={this.handleTodoUpdate.bind(this)} onStatusChange={this.handleTodoStatusToggle.bind(this)} onSubTaskSubmit={this.handleSubTaskSubmit.bind(this)} /> : null}
+            <TodoList 
+              selectedList={this.state.selectedList} 
+              onTodoClick={this.handleSelectedTodo.bind(this)} 
+              todos={this.state.todos} 
+              onStatusChange={this.handleTodoStatusToggle.bind(this)} 
+            />
+            {this.state.selectedTodo 
+              ? <TodoDetail 
+                  todo={this.state.selectedTodo} 
+                  onChange={this.handleTodoUpdate.bind(this)} 
+                  onStatusChange={this.handleTodoStatusToggle.bind(this)} 
+                  onSubTaskSubmit={this.handleSubTaskSubmit.bind(this)} 
+                /> 
+              : null
+            }
           </div>
         </div>
-        
       </div>
     );
   };

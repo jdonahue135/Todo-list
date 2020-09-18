@@ -29,11 +29,26 @@ class LogIn extends React.Component {
                 <div className="input-container">
                     <div className={usernameClassList}>
                         Username
-                        <input type="text" name="username" className="log-in-input" onFocus={this.handleFocus.bind(this)} onBlur={this.handleBlur.bind(this)} onChange={this.props.onInputChange}/>
+                        <input 
+                            type="text" 
+                            name="username" 
+                            className="log-in-input" 
+                            onFocus={this.handleFocus.bind(this)} 
+                            onBlur={this.handleBlur.bind(this)} 
+                            onChange={this.props.onInputChange}
+                        />
                     </div>
+                    
                     <div className={passwordClassList}>
                         Password
-                        <input type="text" name="password" className="log-in-input" onFocus={this.handleFocus.bind(this)} onBlur={this.handleBlur.bind(this)} onChange={this.props.onInputChange}/>
+                        <input 
+                            type="text" 
+                            name="password" 
+                            className="log-in-input" 
+                            onFocus={this.handleFocus.bind(this)} 
+                            onBlur={this.handleBlur.bind(this)} 
+                            onChange={this.props.onInputChange}
+                        />
                     </div>
                 </div>
                 <div className={buttonClass} onClick={this.props.buttonEnabled ? this.props.onSubmit : null}>

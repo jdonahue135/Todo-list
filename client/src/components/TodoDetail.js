@@ -51,8 +51,19 @@ class TodoDetail extends React.Component {
         return (
             <div className="todo-detail-container list">
                 <div className="todo-detail-header">
-                    <TextareaAutosize className="text-area-autosize todo-title" id="title" maxLength={50} value={this.state.title} onChange={this.handleTitleChange.bind(this)} onBlur={this.handleSubmit.bind(this)}/>
-                    <Priority class={priorityClass} onClick={this.props.onChange} id="priority" />
+                    <TextareaAutosize 
+                        className="text-area-autosize todo-title" 
+                        id="title" 
+                        maxLength={50} 
+                        value={this.state.title} 
+                        onChange={this.handleTitleChange.bind(this)} 
+                        onBlur={this.handleSubmit.bind(this)}      
+                    />
+                    <Priority 
+                        class={priorityClass} 
+                        onClick={this.props.onChange} 
+                        id="priority" 
+                    />
                 </div>
                 <TextareaAutosize
                     maxLength={240} 
@@ -67,8 +78,13 @@ class TodoDetail extends React.Component {
                     <div className="sub-tasks-title sub-title">SUB TASKS</div>
                     {this.props.todo.subTasks.length > 0 
                     ? this.props.todo.subTasks.map(subTask => (
-                        <TodoItem key={this.props.todo.subTasks.indexOf(subTask)} todo={subTask} onStatusChange={this.props.onStatusChange} />
-                    )): null}
+                        <TodoItem 
+                            key={this.props.todo.subTasks.indexOf(subTask)} 
+                            todo={subTask} 
+                            onStatusChange={this.props.onStatusChange} 
+                        />
+                    ))
+                    : null}
                     <SubTask onSubTaskSubmit={this.props.onSubTaskSubmit} />
                 </div>
                 <div className="date-container">
