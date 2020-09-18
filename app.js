@@ -9,8 +9,11 @@ var bodyParser = require("body-parser");
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var todosRouter = require('./routes/todos');
 
 dotenv.config();
+
+const auth = require("./config/auth");
 
 var app = express();
 
@@ -18,9 +21,9 @@ var app = express();
 var mongoose = require("mongoose");
 
 var mongoDB =
-  "mongodb+srv://user:" +
+  "mongodb://user:" +
   process.env.MONGODB_PASSWORD +
-  "@cluster0-zxjpq.mongodb.net/test?retryWrites=true&w=majority";
+  "@cluster0-shard-00-00.zxjpq.mongodb.net:27017,cluster0-shard-00-01.zxjpq.mongodb.net:27017,cluster0-shard-00-02.zxjpq.mongodb.net:27017/test?ssl=true&replicaSet=atlas-pqsmc6-shard-0&authSource=admin&retryWrites=true&w=majority";
 mongoose.connect(mongoDB, { useNewUrlParser: true });
 var db = mongoose.connection;
 db.on("error", console.error.bind(console, "MongoDB connection error:"));
@@ -40,10 +43,17 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(auth.getToken);
+app.use(express.static(path.join(__dirname, "client/build")));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/todos', todosRouter);
+
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "/client/build/index.html"));
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -58,6 +68,7 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
+  console.log(err);
   res.render('error');
 });
 
