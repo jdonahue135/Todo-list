@@ -53,7 +53,7 @@ class TodoForm extends React.Component {
         const priorityClass = this.state.priority === true ? " high-priority" : "";
         return (
             <ClickAwayListener onClickAway={this.handleClickAway.bind(this)}>
-                <div className="todo-form">
+                <div className="todo-form overlay-form">
                     <Priority class={priorityClass} onClick={this.togglePriority.bind(this)} />
                     <TextareaAutosize onChange={this.handleTitleInputChange.bind(this)} maxLength={50} className="text-area-autosize todo-form-title" placeholder="I need to..." />
                     <div className="notes-title sub-title">NOTES</div>
