@@ -27,7 +27,7 @@ class Sidebar extends React.Component {
                         {todoLists.map(list => this.renderList(list, todoLists.indexOf(list)))}
                     </div>
                 </div>
-                <div className="account"><span className="link">Login</span> or <span className="link">Sign up</span></div>
+                {this.props.user ? <div onClick={this.props.handleLogOut} className="log-out link">Log out</div>: null}
             </div>
         )
     }
