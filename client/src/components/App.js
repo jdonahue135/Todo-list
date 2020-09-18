@@ -52,13 +52,6 @@ class App extends React.Component {
     if (this.state.user && this.state.user !== prevState.user) {
       this.fetchTodos();
     }
-    if (this.state.todos && this.state.selectedList !== prevState.selectedList) {
-      if (this.state.selectedList === 0) {
-        this.setState({selectedTodo: this.state.todos[0]});
-      } else {
-        this.setState({selectedTodo: this.state.todos.filter(todo => todo.priority === true)[0]});
-      }
-    }
     if (prevState.jwt !== this.state.jwt) {
       //save jwt and user to local storage
       localStorage.removeItem("jwt");
@@ -137,7 +130,10 @@ class App extends React.Component {
   };
   handleListChange(e) {
     const selectedList = parseInt(e.target.id.replace("sidebar-", ""));
-    this.setState({selectedList});
+    if (selectedList === this.state.selectedList) {
+      return;
+    }
+    this.setState({selectedList, selectedTodo: null});
   };
   handleSelectedTodo(selectedTodo) {
     this.setState({selectedTodo});
@@ -240,6 +236,8 @@ class App extends React.Component {
             user: res.user,
             showLogInForm: false,
             showLoginWarning: false,
+            selectedTodo: null,
+            selectedList: 0,
           });
         }
       })
@@ -283,6 +281,8 @@ class App extends React.Component {
       user: null,
       jwt: null,
       todos: [],
+      selectedList: 0,
+      selectedTodo: null,
     });
   }
   render() {
