@@ -14,18 +14,67 @@
   position: fixed;
   opacity: 0.5;
 }
-.todo-form {
-  text-align: left;
+.overlay-form {
   z-index: 9999;
   background-color: white;
   position: absolute;
   top: 20vh;
+  border-radius: 15px;
+}
+.log-in-container {
+  height: 50%;
+  width: 50%;
+  position: absolute;
+  top: 25%;
+  left: 25%;
+}
+.input-container {
+  margin-top: 50px;
+}
+.input-overlay {
+  padding-left: 10px;
+  border-bottom: 2px solid #767676;
+  width: fit-content;
+  margin: 20px 15px;
+  height: 50px;
+  background-color: #f5f8fa;
+  text-align: left;
+  color: #657786;
+  font-size: 15px;
+  padding-top: 5px;
+}
+.input-overlay-focused {
+  color: rgb(0, 128, 255);
+  border-bottom: 2px solid rgb(0, 128, 255);
+}
+.log-in-input {
+  border: 0;
+  display: block;
+  width: 540px;
+  padding: 0;
+  background-color: #f5f8fa;
+  position: relative;
+  top: 5px;
+  font-size: 19px;
+}
+.log-in-input:focus {
+  outline: 0;
+}
+.cancel {
+  margin-top: 15px;
+  color: rgb(0, 128, 255);
+  cursor: pointer;
+  width: fit-content;
+}
+.cancel:hover {
+  text-decoration: underline;
+}
+.todo-form {
+  text-align: left;
   left: 35vw;
   height: 300px;
   width: 500px;
-  padding: 10px;
   padding-left: 0;
-  border-radius: 15px;
 }
 .text-area-autosize {
   border: none;
@@ -59,6 +108,7 @@
   font-weight: 800;
   padding: 10px 20px;
   width: 70%;
+  border-radius: 15px;
 }
 .notes-title {
   padding: 10px 20px;
@@ -93,17 +143,17 @@
   position: fixed;
   background-color: white;
 }
-.account {
-  position: absolute;
-  bottom: 100px;
-  left: 50px;
-}
 .link {
   color: rgb(0, 128, 255);
   cursor: pointer;
 }
 .link:hover {
   text-decoration: underline;
+}
+.log-out {
+  position: absolute;
+  bottom: 12%;
+  left: 35%;
 }
 .sidebar-content-container div {
   padding-left: 25px;
@@ -162,6 +212,12 @@
   opacity: 0.7;
   transition-duration: 0.5s
 }
+.btn-disabled {
+  opacity: 0.5;
+}
+.btn-disabled:hover {
+  opacity: 0.5;
+}
 .fa-plus {
   color: white;
   display: inline-block;
@@ -195,6 +251,15 @@
   border-radius: 20px;
   padding: 20px;
   overflow: scroll;
+}
+.no-todos-container {
+  text-align: center;
+  margin-top: 30%;
+}
+.no-todos-headline {
+  font-size: 2vw;
+  font-weight: 800;
+  margin-bottom: 15px;
 }
 .todo-item-container {
   padding: 10px 0;
@@ -250,6 +315,7 @@
 }
 .todo-form-priority {
   margin-top: 10px;
+  margin-right: 10px;
 }
 .high-priority {
   color: rgb(209, 4, 4);
