@@ -8,6 +8,16 @@ const TodoList = (props) => {
     if (todoLists[props.selectedList] === "Priority") {
         todos = todos.filter(todo => todo.priority === true);
     }
+    if (todos.length === 0) {
+        return (
+            <div className="todo-list-container list">
+                <div className="no-todos-container">
+                    <div className="no-todos-headline">You're all done!</div>
+                    <div className="no-todos-sub-headline">Enjoy your day or add a new task</div>
+                </div>
+            </div>
+        )
+    }
     return (
         <div className="todo-list-container list">
             <div className="todo-title">{todoLists[props.selectedList]}</div>
