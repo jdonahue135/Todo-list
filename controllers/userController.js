@@ -1,7 +1,9 @@
 var User = require("../models/User");
+var Todo = require("../models/Todo");
+var SubTask = require("../models/SubTask");
 
 const bcrypt = require("bcrypt");
-//const jwt = require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
 const { body } = require("express-validator");
 const { sanitizeBody } = require("express-validator");
 
@@ -20,14 +22,8 @@ exports.signup = (req, res, next) => {
         .withMessage("Password must be specified.")
         .isAlphanumeric()
         .withMessage("Password has non-alphanumeric characters.");
-        body("name")
-        .trim()
-        .isLength({ min: 1 })
-        .withMessage("Name must be specified.")
-        .isAlphanumeric()
-        .withMessage("Name has non-alphanumeric characters.");
     // Sanitize fields.
-    sanitizeBody("username").escape(), sanitizeBody("password").escape(), sanitizeBody("name").escape();
+    sanitizeBody("username").escape(), sanitizeBody("password").escape();
   
     //Validate input
     if (req.body.username == "") {
@@ -36,9 +32,6 @@ exports.signup = (req, res, next) => {
     if (req.body.password == "") {
       res.json({ message: "password must be specified" });
     }
-    if (req.body.name == "") {
-        res.json({ message: "name must be specified" });
-      }
   
     //Verify that username does not already exist
     User.findOne({ username: req.body.username }, (err, user) => {
@@ -56,24 +49,59 @@ exports.signup = (req, res, next) => {
               console.log(err);
               return next(err);
             }
+            
+            //if user made todos before signing up, make todos
+            let todos = [];
+            if (req.body.todos.length > 1) {
+              for (let i = 0; i < req.body.todos.length; i++) {
+                let subTasks = []
+                if (req.body.todos[i].subTasks.length > 0) {
+                  
+                  //iterate through subTasks and add to DB
+                  for (let x = 0; x < req.body.todos[i].subTasks.length; x++) {
+                    const new_subtask = new SubTask({
+                      title: req.body.todos[i].subTasks[x].title,
+                      isDone: req.body.todos[i].subTasks[x].isDone,
+                    });
+                    subTasks.push(new_subtask)
+                    new_subtask.save((err) => {
+                      if (err) return next(err);
+                    });
+                  }
+                }
+                const new_todo = new Todo({
+                  title: req.body.todos[i].title,
+                  priority: req.body.todos[i].priority,
+                  notes: req.body.todos[i].notes,
+                  isDone: req.body.todos[i].isDone,
+                  date: req.body.todos[i].date,
+                  subTasks: subTasks,
+                });
+                todos.push(new_todo);
+                new_todo.save((err) => {
+                  if (err) return next(err);
+                });
+              };
+            };
             const new_user = new User({
               username: req.body.username,
               password: hashedPassword,
-              name: req.body.name,
+              todos: todos,
             });
             new_user.save((err) => {
               if (err) return next(err);
             });
+
             //commented out until jwt is implemented: get token for user
-            /*jwt.sign({ new_user }, process.env.SECRET_KEY, (err, token) => {
-              if (err) return next(err);*/
-              //else {
+            jwt.sign({ new_user }, process.env.SECRET_KEY, (err, token) => {
+              if (err) return next(err);
+              else {
                 res.json({
-                  //token: token,
+                  token: token,
                   user: new_user,
                 });
-              //}
-            //});
+              }
+            });
           }
         );
       }
@@ -95,15 +123,15 @@ exports.login = function (req, res, next) {
           }
           if (result) {
             //commented out until jwt is implemented
-            /*jwt.sign({ theUser }, process.env.SECRET_KEY, (err, token) => {
+            jwt.sign({ theUser }, process.env.SECRET_KEY, (err, token) => {
               if (err) return next(err);
-              else {*/
+              else {
                 res.json({
-                  //token: token,
+                  token: token,
                   user: theUser,
                 });
-              //}
-            //});
+              }
+            });
           } else {
             res.json({ success: false, message: "passwords do not match" });
           }
