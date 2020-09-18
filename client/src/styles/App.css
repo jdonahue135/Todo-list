@@ -22,11 +22,18 @@
   border-radius: 15px;
 }
 .log-in-container {
-  height: 50%;
   width: 50%;
   position: absolute;
   top: 25%;
   left: 25%;
+}
+.warning {
+  color: rgb(224, 36, 94);
+  width: 570px;
+  font-size: 15px;
+  width: 75%;
+  position: relative;
+  margin-top: 20px;
 }
 .input-container {
   margin-top: 50px;
@@ -61,7 +68,7 @@
   outline: 0;
 }
 .cancel {
-  margin-top: 15px;
+  margin: 15px;
   color: rgb(0, 128, 255);
   cursor: pointer;
   width: fit-content;

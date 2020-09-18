@@ -185,7 +185,8 @@ class App extends React.Component {
       usernameInput: "", 
       passwordInput: "",
       showSignUpForm: false,
-      showLogInForm: false
+      showLogInForm: false,
+      showLoginWarning: null,
     });
   };
   handleInputChange(e) {
@@ -208,13 +209,13 @@ class App extends React.Component {
       .then((res) => res.json())
       .then((res) => {
         if (res.success === false) {
-          //this.setState({ showLoginWarning: true });
+          this.setState({ showLoginWarning: true });
         } else {
           this.setState({
             jwt: res.token,
             user: res.user,
             showLogInForm: false,
-            //showLoginWarning: false,
+            showLoginWarning: false,
           });
         }
       })

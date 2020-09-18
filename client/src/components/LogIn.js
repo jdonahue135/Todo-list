@@ -26,6 +26,13 @@ class LogIn extends React.Component {
         const buttonClass = this.props.buttonEnabled ? "btn-container" : "btn-container btn-disabled"
         return (
             <div className="log-in-container overlay-form">
+                {this.props.warning ? (
+                    <div className="warning">
+                        The username and password you entered did not match our records.
+                        Please double-check and try again.
+                    </div>
+                    ) : null
+                }
                 <div className="input-container">
                     <div className={usernameClassList}>
                         Username
