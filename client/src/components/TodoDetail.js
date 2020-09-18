@@ -41,14 +41,9 @@ class TodoDetail extends React.Component {
             this.setState({notes: e.target.value});
         }
     };
-    handleTitleSubmit() {
-        if (this.state.title !== this.props.todo.title) {
-            this.props.onTitleChange(this.state.title, this.props.todo);
-        };
-    };
-    handleNotesSubmit() {
-        if (this.state.notes !== this.props.todo.notes) {
-            this.props.onNotesChange(this.state.notes, this.props.todo);
+    handleSubmit(e) {
+        if (this.state[e.target.id] !== this.props.todo[e.target.id]) {
+            this.props.onChange(e);
         };
     };
     render() {
@@ -56,16 +51,17 @@ class TodoDetail extends React.Component {
         return (
             <div className="todo-detail-container list">
                 <div className="todo-detail-header">
-                    <TextareaAutosize className="text-area-autosize todo-title" maxLength={50} value={this.state.title} onChange={this.handleTitleChange.bind(this)} onBlur={this.handleTitleSubmit.bind(this)}/>
-                    <Priority class={priorityClass} onClick={this.props.onPriorityChange} />
+                    <TextareaAutosize className="text-area-autosize todo-title" id="title" maxLength={50} value={this.state.title} onChange={this.handleTitleChange.bind(this)} onBlur={this.handleSubmit.bind(this)}/>
+                    <Priority class={priorityClass} onClick={this.props.onChange} id="priority" />
                 </div>
                 <TextareaAutosize
                     maxLength={240} 
                     placeholder="Insert your notes here" 
-                    className="text-area-autosize todo-item-notes" 
+                    className="text-area-autosize todo-item-notes"
+                    id="notes"
                     value={this.state.notes} 
                     onChange={this.handleNotesChange.bind(this)}
-                    onBlur={this.handleNotesSubmit.bind(this)}
+                    onBlur={this.handleSubmit.bind(this)}
                     />
                 <div className="sub-tasks-container">
                     <div className="sub-tasks-title sub-title">SUB TASKS</div>
