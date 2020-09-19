@@ -10,6 +10,7 @@ var bodyParser = require("body-parser");
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var todosRouter = require('./routes/todos');
+var subTasksRouter = require('./routes/subTasks');
 
 dotenv.config();
 
@@ -49,6 +50,7 @@ app.use(express.static(path.join(__dirname, "client/build")));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/todos', todosRouter);
+app.use('/subtasks', subTasksRouter);
 
 
 app.get("*", (req, res) => {
