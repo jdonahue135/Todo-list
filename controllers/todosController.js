@@ -1,5 +1,7 @@
 var User = require("../models/User");
 var Todo = require("../models/Todo");
+var SubTask = require("../models/SubTask");
+var async = require("async");
 
 const { body } = require("express-validator");
 const { sanitizeBody } = require("express-validator");
@@ -14,7 +16,7 @@ exports.todos_get = (req, res, next) => {
             },
           })
         .exec((err, theUser) => {
-            if (err) { res.json({ success: false, message: "Error, API failed to fetch info from db" }); }
+            if (err) { res.json({ success: false, message: "Error: API failed to fetch info from db" }); }
             else {
                 if (!theUser) res.json({ success: false, message: "No user" });
                 else res.json({success: true, todos: theUser.todos});
@@ -32,9 +34,15 @@ exports.todo_post = (req, res, next) => {
     sanitizeBody('notes').escape(),
 
     User.findById(req.body.user._id)
-        .select('todos')
+        .populate('todos')
+        .populate({
+            path: "todos",
+            populate: {
+              path: "subTasks",
+            },
+          })
         .exec((err, theUser) => {
-            if (err) res.json({ success: false, message: "Error, API failed to fetch info from db" });
+            if (err) res.json({ success: false, message: "Error: API failed to fetch info from db" });
             else {
                 if (!theUser) res.json({ success: false, message: "User not found" });
                 else {
@@ -88,4 +96,34 @@ exports.todo_update = (req, res, next) => {
             else res.json({success: true, message: "todo updated"});
         })
     }
+}
+
+exports.todo_delete = (req, res, next) => {
+    async.parallel({
+        user: (callback) => {
+            User.findById(req.body.parent._id).exec(callback)
+        },
+        todo: (callback) => {
+            Todo.findById(req.params.todoid).exec(callback)
+        },
+    }, (err, results) => {
+        if (err) res.json({success: false, err});
+        if (!results.user) res.json({success: false, message: "user not found"});
+        if (!results.todo) res.json({success: false, message: "todo not found"});
+
+        //remove todo from user
+        results.user.todos.splice(results.user.todos.indexOf(req.params.todoid), 1);
+
+        //remove subTasks from todo
+        for (let i = 0; i < results.todo.subTasks.length; i++) {
+            SubTask.findByIdAndDelete(results.todo.subTasks[i], err => {
+                if (err) res.json({success: false, message: "todo subTask could not be found in db"});
+            });
+        };
+
+        //delete todo and save user
+        results.todo.remove();
+        results.user.save();
+        res.json({success: true, message: "todo removed"})
+    })
 }
