@@ -250,6 +250,40 @@ class App extends React.Component {
         };
       });
   };
+  handleDelete(item) {
+    const type = item.subTasks ? "todo" : "subTask";
+    const todos = [...this.state.todos];
+    if (type === "todo") {
+      todos.splice(todos.indexOf(item), 1);
+    } else {
+      todos[todos.indexOf(this.state.selectedTodo)].subTasks.splice(todos[todos.indexOf(this.state.selectedTodo)].subTasks.indexOf(item), 1);
+    }
+    this.setState({todos});
+    if (this.state.user) {
+      const parent = item.subTasks ? this.state.user : this.state.selectedTodo
+      const requestOptions = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: "Bearer " + this.state.jwt,
+        },
+        body: JSON.stringify({
+          parent: parent,
+        }),
+      };
+      const url = "/" + type + "s/" + item._id + "/delete";
+      fetch(url, requestOptions)
+      .then(res => res.json())
+      .then(res => {
+        if (!res.success) {
+          console.log(res.message)
+        } else {
+          console.log(res.message)
+          this.fetchTodos();
+        };
+      });
+    };
+  }
   handleAccountClick(e) {
     if (e.target.id === "log-in") {
       this.setState({showLogInForm: true});
@@ -404,6 +438,7 @@ class App extends React.Component {
               onTodoClick={this.handleSelectedTodoChange.bind(this)} 
               todos={this.state.todos} 
               onStatusChange={this.handleTodoStatusToggle.bind(this)} 
+              onTodoDelete={this.handleDelete.bind(this)}
             />
             {this.state.selectedTodo 
               ? <TodoDetail 
@@ -411,6 +446,7 @@ class App extends React.Component {
                   onChange={this.handleTodoUpdate.bind(this)} 
                   onStatusChange={this.handleTodoStatusToggle.bind(this)} 
                   onSubTaskSubmit={this.handleSubTaskSubmit.bind(this)} 
+                  onSubTaskDelete={this.handleDelete.bind(this)}
                 /> 
               : null
             }
