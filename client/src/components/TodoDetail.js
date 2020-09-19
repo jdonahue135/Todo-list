@@ -81,7 +81,8 @@ class TodoDetail extends React.Component {
                         <TodoItem 
                             key={this.props.todo.subTasks.indexOf(subTask)} 
                             todo={subTask} 
-                            onStatusChange={this.props.onStatusChange} 
+                            onStatusChange={this.props.onStatusChange}
+                            onDelete={this.props.onSubTaskDelete}
                         />
                     ))
                     : null}

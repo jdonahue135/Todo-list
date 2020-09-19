@@ -28,6 +28,7 @@ const TodoList = (props) => {
                         onClick={props.onTodoClick} 
                         key={todos.indexOf(todo)} 
                         todo={todo}
+                        onDelete={props.onTodoDelete}
                     />
                 )): null}
             </div>
