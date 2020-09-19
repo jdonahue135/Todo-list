@@ -274,7 +274,8 @@
   border: solid 1px rgb(207, 203, 203);
   border-radius: 10px;
   cursor: pointer;
-  transition-duration: 0.5s
+  transition-duration: 0.5s;
+  z-index: 997;
 }
 .todo-item-container:hover {
   border-color: rgb(0, 128, 255);
@@ -295,12 +296,22 @@
   border: solid 1px rgb(90, 88, 88);
   margin: 0 20px;
 }
-.fa-check {
+.fa-icon {
   font-size: 1.75vw;
+  color: grey;
+}
+.fa-check {
   position: relative;
   right: 2px;
   bottom: 2px;
-  color: grey;
+}
+.fa-x {
+  float: right;
+  margin-right: 10px;
+  z-index: 998;
+}
+.fa-x:hover {
+  color: black;
 }
 .fa-check:hover {
   color: rgb(0, 128, 255);
