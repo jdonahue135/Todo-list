@@ -14,4 +14,7 @@ router.post("/", auth.verifyToken, todos_controller.todo_post);
 /* handle todo update on POST */
 router.post("/:todoid/update", auth.verifyToken, todos_controller.todo_update);
 
+/* handle todo delete on POST */
+router.post("/:todoid/delete", auth.verifyToken, todos_controller.todo_delete);
+
 module.exports = router;
