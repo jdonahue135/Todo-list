@@ -7,7 +7,12 @@ const { sanitizeBody } = require("express-validator");
 exports.todos_get = (req, res, next) => {
     User.findById(req.params.userid)
         .select('-password')
-        .populate('todos')
+        .populate({
+            path: "todos",
+            populate: {
+              path: "subTasks",
+            },
+          })
         .exec((err, theUser) => {
             if (err) { res.json({ success: false, message: "Error, API failed to fetch info from db" }); }
             else {
@@ -64,6 +69,7 @@ exports.todo_update = (req, res, next) => {
     
     const original_todo = Todo.findById(req.params.todoid)
 
+    //object is a Todo
     const todo = new Todo({
         _id: req.params.todoid,
         title: req.body.todo.title,
@@ -72,7 +78,7 @@ exports.todo_update = (req, res, next) => {
         isDone: req.body.todo.isDone,
         date: req.body.todo.date,
         subTasks: req.body.todo.subTasks,
-    })
+    });
 
     if (todo === original_todo) {
         res.json({success: false, message: "no change necessary"});
