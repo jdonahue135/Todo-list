@@ -1,5 +1,6 @@
 var Todo = require("../models/Todo");
 var SubTask = require("../models/SubTask");
+var async = require("async");
 
 const { body } = require("express-validator");
 const { sanitizeBody } = require("express-validator");
@@ -57,4 +58,27 @@ exports.sub_task_update = (req, res, next) => {
             else res.json({success: true, message: "sub task updated"});
         });
     };
+}
+
+exports.sub_task_delete = (req, res, next) => {
+    async.parallel({
+        todo: (callback) => {
+            Todo.findById(req.body.parent._id).exec(callback)
+        },
+        subTask: (callback) => {
+            SubTask.findById(req.params.subtaskid).exec(callback)
+        },
+    }, (err, results) => {
+        if (err) res.json({success: false, err})
+        if (!results.todo) res.json({success: false, message: "todo not found"})
+        if (!results.subTask) res.json({success: false, message: "sub task not found"})
+        results.todo.subTasks.splice(results.todo.subTasks.indexOf(results.subTask._id), 1);
+        results.subTask.remove(err => {
+            if (err) res.json({success: false, err});
+        })
+        results.todo.save(err => {
+            if (err) res.json({success: false, err});
+        });
+        res.json({success: true, message: "sub task deleted"})
+    });
 }
