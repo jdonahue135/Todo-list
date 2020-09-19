@@ -83,10 +83,17 @@ class App extends React.Component {
           console.log(res.message);
           return;
         } else {
-          this.setState({todos: res.todos})
+          let selectedTodo = this.state.selectedTodo ? {...this.state.selectedTodo} : null;
+          if (selectedTodo) {
+            selectedTodo = res.todos.find(todo => todo._id === selectedTodo._id)
+          };
+          this.setState({
+            todos: res.todos,
+            selectedTodo: selectedTodo,
+          });
         }
       })
-  }
+  };
   toggleOverlay() {
     this.setState({showOverlay: !this.state.showOverlay})
   };
@@ -128,6 +135,37 @@ class App extends React.Component {
         })
     }
   };
+  handleSubTaskSubmit(title) {
+    let todos = [...this.state.todos];
+    const subTask = {
+      title: title,
+      isDone: false,
+    };
+    todos[todos.indexOf(this.state.selectedTodo)].subTasks.push(subTask);
+    this.setState({todos});
+    if (this.state.user) {
+      const requestOptions = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: "Bearer " + this.state.jwt,
+        },
+        body: JSON.stringify({
+          subTask: subTask,
+          todo: this.state.selectedTodo,
+        }),
+      };
+      fetch("/subtasks", requestOptions)
+        .then(res => res.json())
+        .then(res => {
+          if (!res.success) {
+            console.log(res.message);
+          } else {
+            this.fetchTodos();
+          }
+        })
+    }
+  };
   handleListChange(e) {
     const selectedList = parseInt(e.target.id.replace("sidebar-", ""));
     if (selectedList === this.state.selectedList) {
@@ -135,7 +173,7 @@ class App extends React.Component {
     }
     this.setState({selectedList, selectedTodo: null});
   };
-  handleSelectedTodo(selectedTodo) {
+  handleSelectedTodoChange(selectedTodo) {
     this.setState({selectedTodo});
   };
   handleTodoStatusToggle(todo) {
@@ -143,8 +181,14 @@ class App extends React.Component {
     //check if todo item is a subtask
     const target = todo.subTasks ? todos[todos.indexOf(todo)]: todos[todos.indexOf(this.state.selectedTodo)].subTasks[todos[todos.indexOf(this.state.selectedTodo)].subTasks.indexOf(todo)];
     target.isDone = !target.isDone;
-    if (this.state.user) this.postTodoUpdate(target);
     this.setState({todos});
+    if (this.state.user) {
+      if (target.subTasks) {
+        this.postTodoUpdate(target);
+      } else {
+        this.postSubTaskUpdate(target);
+      };
+    };
   };
   handleTodoUpdate(e) {
     let todos = [...this.state.todos];
@@ -184,14 +228,27 @@ class App extends React.Component {
         }
       });
   }
-  handleSubTaskSubmit(title) {
-    let todos = [...this.state.todos];
-    const subTask = {
-      title: title,
-      isDone: false,
+  postSubTaskUpdate(subTask) {
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: "Bearer " + this.state.jwt,
+      },
+      body: JSON.stringify({
+        subTask: subTask,
+      }),
     };
-    todos[todos.indexOf(this.state.selectedTodo)].subTasks.push(subTask);
-    this.setState({todos});
+
+    fetch("/subtasks/" + subTask._id + "/update", requestOptions)
+      .then(res => res.json())
+      .then(res => {
+        if (!res.success) {
+          console.log(res.message)
+        } else {
+          this.fetchTodos();
+        };
+      });
   };
   handleAccountClick(e) {
     if (e.target.id === "log-in") {
@@ -344,7 +401,7 @@ class App extends React.Component {
           <div className="content">
             <TodoList 
               selectedList={this.state.selectedList} 
-              onTodoClick={this.handleSelectedTodo.bind(this)} 
+              onTodoClick={this.handleSelectedTodoChange.bind(this)} 
               todos={this.state.todos} 
               onStatusChange={this.handleTodoStatusToggle.bind(this)} 
             />
