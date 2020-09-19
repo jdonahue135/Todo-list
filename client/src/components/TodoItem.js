@@ -1,6 +1,9 @@
 import React from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckCircle } from '@fortawesome/free-solid-svg-icons';
+import { faTimesCircle } from '@fortawesome/free-regular-svg-icons';
+
+
 
 class TodoItem extends React.Component {
     constructor(props) {
@@ -21,6 +24,11 @@ class TodoItem extends React.Component {
             this.props.onClick(this.props.todo);
         };
     };
+    handleDeleteClick(e) {
+        //make sure parent onClick event does not fire
+        e.stopPropagation();
+        this.props.onDelete(this.props.todo);
+    };
     handleCheckboxClick(e) {
         //make sure parent onClick event does not fire
         e.stopPropagation();
@@ -39,17 +47,27 @@ class TodoItem extends React.Component {
             titleClassList = titleClassList + " done"
         }
         return (
-            <div className="todo-item-container" onClick={this.handleClick.bind(this)}>
-                <div className="todo-item">
-                    <div className={checkboxClass} onClick={this.handleCheckboxClick.bind(this)}>
-                        {this.state.isDone 
-                            ? <FontAwesomeIcon 
-                                icon={faCheckCircle} 
-                                className="fa-check" 
-                            /> 
-                            : null}
+            <div>
+                <div className="todo-item-container" onClick={this.handleClick.bind(this)}>
+                    <div className="todo-item">
+                        <div className={checkboxClass} onClick={this.handleCheckboxClick.bind(this)}>
+                            {this.state.isDone 
+                                ?<FontAwesomeIcon 
+                                    icon={faCheckCircle} 
+                                    className="fa-icon fa-check" 
+                                />
+                                : null}
+                        </div>
+                        <div className={titleClassList}>{this.props.todo.title}</div>
+                        {this.state.isDone
+                            ?<FontAwesomeIcon
+                                icon={faTimesCircle}
+                                className="fa-icon fa-x"
+                                onClick={this.handleDeleteClick.bind(this)}
+                            />
+                            : null
+                        }
                     </div>
-                    <div className={titleClassList}>{this.props.todo.title}</div>
                 </div>
             </div>
         )
