@@ -97,6 +97,7 @@ exports.signup = (req, res, next) => {
               if (err) return next(err);
               else {
                 res.json({
+                  success: true,
                   token: token,
                   user: new_user,
                 });
