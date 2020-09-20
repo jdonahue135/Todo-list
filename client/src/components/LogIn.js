@@ -49,7 +49,7 @@ class LogIn extends React.Component {
                     <div className={passwordClassList}>
                         Password
                         <input 
-                            type="text" 
+                            type="password" 
                             name="password" 
                             className="log-in-input" 
                             onFocus={this.handleFocus.bind(this)} 
