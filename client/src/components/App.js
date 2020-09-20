@@ -356,8 +356,6 @@ class App extends React.Component {
             user: res.user,
             showSignUpForm: false,
           })
-        } else {
-          this.setState({showLoginWarning: true})
         }
       }
       )
