@@ -49,21 +49,17 @@ class App extends React.Component {
     }
   };
   componentDidUpdate(prevProps, prevState) {
-    if (this.state.user && this.state.user !== prevState.user) {
-      this.fetchTodos();
-    }
     if (prevState.jwt !== this.state.jwt) {
       //save jwt and user to local storage
       localStorage.removeItem("jwt");
       localStorage.removeItem("user");
       localStorage.setItem("jwt", this.state.jwt);
       localStorage.setItem("user", JSON.stringify(this.state.user));
-    }
-
-    //update selectedTodo on backend if changed
-    if (this.state.updateBackend && this.state.selectedTodo !== prevState.selectedTodo) {
-      this.postTodoUpdate(prevState.selectedTodo);
     };
+    if (this.state.user) {
+      if (this.state.user !== prevState.user) this.fetchTodos();
+      if (this.state.updateBackend) this.postTodoUpdate(prevState.selectedTodo);
+    }
   };
   fetchTodos() {
     const requestOptions = {
@@ -93,6 +89,7 @@ class App extends React.Component {
           });
         }
       })
+      .catch(err => console.log(err));
   };
   toggleOverlay() {
     this.setState({showOverlay: !this.state.showOverlay})
@@ -133,6 +130,7 @@ class App extends React.Component {
             this.setState({todos: res.todos})
           }
         })
+        .catch(err => {console.log(err)});
     }
   };
   handleSubTaskSubmit(title) {
@@ -164,6 +162,7 @@ class App extends React.Component {
             this.fetchTodos();
           }
         })
+        .catch(err => {console.log(err)});
     }
   };
   handleListChange(e) {
@@ -193,7 +192,7 @@ class App extends React.Component {
   handleTodoUpdate(e) {
     let todos = [...this.state.todos];
     let todoIndex = todos.indexOf(this.state.selectedTodo)
-    if (!e.target.value) {
+    if (e.target.id === "priority") {
       todos[todoIndex][e.target.id] = !todos[todoIndex][e.target.id];
     } else {
       todos[todoIndex][e.target.id] = e.target.value;
@@ -226,7 +225,8 @@ class App extends React.Component {
           this.setState({updateBackend: null});
           this.fetchTodos();
         }
-      });
+      })
+      .catch(err => {console.log(err)});
   }
   postSubTaskUpdate(subTask) {
     const requestOptions = {
@@ -248,17 +248,22 @@ class App extends React.Component {
         } else {
           this.fetchTodos();
         };
-      });
+      })
+      .catch(err => {console.log(err)});
   };
   handleDelete(item) {
     const type = item.subTasks ? "todo" : "subTask";
     const todos = [...this.state.todos];
+    const todoIndex = todos.indexOf(this.state.selectedTodo);
     if (type === "todo") {
       todos.splice(todos.indexOf(item), 1);
     } else {
-      todos[todos.indexOf(this.state.selectedTodo)].subTasks.splice(todos[todos.indexOf(this.state.selectedTodo)].subTasks.indexOf(item), 1);
+      todos[todoIndex].subTasks.splice(todos[todoIndex].subTasks.indexOf(item), 1);
     }
-    this.setState({todos});
+    this.setState({
+      todos,
+      selectedTodo: todos[todoIndex],
+    });
     if (this.state.user) {
       const parent = item.subTasks ? this.state.user : this.state.selectedTodo
       const requestOptions = {
@@ -278,10 +283,10 @@ class App extends React.Component {
         if (!res.success) {
           console.log(res.message)
         } else {
-          console.log(res.message)
           this.fetchTodos();
         };
-      });
+      })
+      .catch(err => {console.log(err)});
     };
   }
   handleAccountClick(e) {
@@ -444,6 +449,7 @@ class App extends React.Component {
                   onChange={this.handleTodoUpdate.bind(this)} 
                   onStatusChange={this.handleTodoStatusToggle.bind(this)} 
                   onSubTaskSubmit={this.handleSubTaskSubmit.bind(this)} 
+                  onSubTaskUpdate={this.postSubTaskUpdate.bind(this)}
                   onSubTaskDelete={this.handleDelete.bind(this)}
                 /> 
               : null
