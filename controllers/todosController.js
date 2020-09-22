@@ -108,22 +108,23 @@ exports.todo_delete = (req, res, next) => {
         },
     }, (err, results) => {
         if (err) res.json({success: false, err});
-        if (!results.user) res.json({success: false, message: "user not found"});
-        if (!results.todo) res.json({success: false, message: "todo not found"});
+        else if (!results.user) res.json({success: false, message: "user not found"});
+        else if (!results.todo) res.json({success: false, message: "todo not found"});
+        else {
+            //remove todo from user
+            results.user.todos.splice(results.user.todos.indexOf(req.params.todoid), 1);
 
-        //remove todo from user
-        results.user.todos.splice(results.user.todos.indexOf(req.params.todoid), 1);
+            //remove subTasks from todo
+            for (let i = 0; i < results.todo.subTasks.length; i++) {
+                SubTask.findByIdAndDelete(results.todo.subTasks[i], err => {
+                    if (err) res.json({success: false, message: "todo subTask could not be found in db"});
+                });
+            };
 
-        //remove subTasks from todo
-        for (let i = 0; i < results.todo.subTasks.length; i++) {
-            SubTask.findByIdAndDelete(results.todo.subTasks[i], err => {
-                if (err) res.json({success: false, message: "todo subTask could not be found in db"});
-            });
+            //delete todo and save user
+            results.todo.remove();
+            results.user.save();
+            res.json({success: true, message: "todo removed"});
         };
-
-        //delete todo and save user
-        results.todo.remove();
-        results.user.save();
-        res.json({success: true, message: "todo removed"})
     })
 }

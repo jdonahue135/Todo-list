@@ -43,7 +43,7 @@ exports.sub_task_update = (req, res, next) => {
 
     // Sanitize fields.
     sanitizeBody('title').escape();
-    
+
     const originalSubTask = SubTask.findById(req.params.subtaskid)
     const subTask = new SubTask({
         _id: req.params.subtaskid,
@@ -70,15 +70,17 @@ exports.sub_task_delete = (req, res, next) => {
         },
     }, (err, results) => {
         if (err) res.json({success: false, err})
-        if (!results.todo) res.json({success: false, message: "todo not found"})
-        if (!results.subTask) res.json({success: false, message: "sub task not found"})
-        results.todo.subTasks.splice(results.todo.subTasks.indexOf(results.subTask._id), 1);
-        results.subTask.remove(err => {
-            if (err) res.json({success: false, err});
-        })
-        results.todo.save(err => {
-            if (err) res.json({success: false, err});
-        });
-        res.json({success: true, message: "sub task deleted"})
+        else if (!results.todo) res.json({success: false, message: "todo not found"})
+        else if (!results.subTask) res.json({success: false, message: "sub task not found"})
+        else {
+            results.todo.subTasks.splice(results.todo.subTasks.indexOf(results.subTask._id), 1);
+            results.subTask.remove(err => {
+                if (err) res.json({success: false, err});
+            })
+            results.todo.save(err => {
+                if (err) res.json({success: false, err});
+            });
+            res.json({success: true, message: "sub task deleted"});
+        };
     });
 }
