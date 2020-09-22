@@ -35,11 +35,7 @@ class TodoDetail extends React.Component {
         };
     }
     handleNotesChange(e) {
-        if (this.state.notes.length === 0 && e.target.value.trim().length === 0) {
-            return;
-        } else {
-            this.setState({notes: e.target.value});
-        }
+        this.setState({notes: e.target.value.trim()});
     };
     handleSubmit(e) {
         if (this.state[e.target.id] !== this.props.todo[e.target.id]) {
@@ -83,10 +79,11 @@ class TodoDetail extends React.Component {
                             todo={subTask} 
                             onStatusChange={this.props.onStatusChange}
                             onDelete={this.props.onSubTaskDelete}
+                            onUpdate={this.props.onSubTaskUpdate}
                         />
                     ))
                     : null}
-                    <SubTask onSubTaskSubmit={this.props.onSubTaskSubmit} />
+                    <SubTask onSubmit={this.props.onSubTaskSubmit} />
                 </div>
                 <div className="date-container">
                     <div className="date-title sub-title">CREATED</div>
