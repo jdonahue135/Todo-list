@@ -1,5 +1,6 @@
 import React from "react"
 import TextareaAutosize from 'react-textarea-autosize';
+import moment from "moment";
 
 import TodoItem from "./TodoItem";
 import Priority from "./Priority";
@@ -87,7 +88,7 @@ class TodoDetail extends React.Component {
                 </div>
                 <div className="date-container">
                     <div className="date-title sub-title">CREATED</div>
-                    <div className="date">Sept 2, 2020</div>
+                    <div className="date">{moment(this.props.todo.date).format('ll')}</div>
                 </div>
             </div>
         )
