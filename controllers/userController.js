@@ -115,7 +115,7 @@ exports.login = function (req, res, next) {
       if (err) {
         res.json({ success: false, err });
       }
-      if (!theUser) {
+      else if (!theUser) {
         res.json({ success: false, message: "username does not exist" });
       } else {
         bcrypt.compare(req.body.password, theUser.password, (err, result) => {
