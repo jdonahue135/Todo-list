@@ -3,26 +3,40 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 import { faTimesCircle } from '@fortawesome/free-regular-svg-icons';
 
-
+import SubTask from "./SubTask";
 
 class TodoItem extends React.Component {
     constructor(props) {
         super(props)
 
         this.state = {
+            title: null,
             isDone: null,
-            showAnimation: false
+            showAnimation: null,
+            showSubTaskForm: null,
         }
     };
     componentDidMount() {
         this.setState({
+            title: this.props.todo.title,
             isDone: this.props.todo.isDone,
         });
     };
+    componentDidUpdate(prevProps) {
+        if (prevProps.todo !== this.props.todo) {
+            this.setState({
+                title: this.props.todo.title,
+                isDone: this.props.todo.isDone,
+                showAnimation: null,
+            })
+        }
+    }
     handleClick() {
         if (this.props.onClick) {
             this.props.onClick(this.props.todo);
-        };
+        } else {
+            this.setState({showSubTaskForm: true});
+        }
     };
     handleDeleteClick(e) {
         //make sure parent onClick event does not fire
@@ -38,7 +52,19 @@ class TodoItem extends React.Component {
         });
         this.props.onStatusChange(this.props.todo);
     };
+    handleSubTaskUpdate(title) {
+        const subTask = {...this.props.todo}
+        subTask.title = title;
+        this.props.onUpdate(subTask);
+        this.setState({
+            showSubTaskForm: false, 
+            title: title,
+        });
+    };
     render() {
+        if (this.state.showSubTaskForm) {
+            return <SubTask subTask={this.props.todo} onUpdate={this.handleSubTaskUpdate.bind(this)} />;
+        }
         let titleClassList = "todo-item-title";
         let checkboxClass = this.state.isDone ? "checkbox check" : "checkbox"
         if (this.state.showAnimation) {
@@ -58,7 +84,7 @@ class TodoItem extends React.Component {
                                 />
                                 : null}
                         </div>
-                        <div className={titleClassList}>{this.props.todo.title}</div>
+                        <div className={titleClassList}>{this.state.title}</div>
                         {this.state.isDone
                             ?<FontAwesomeIcon
                                 icon={faTimesCircle}
