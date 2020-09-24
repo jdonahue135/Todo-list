@@ -21,7 +21,7 @@ class Sidebar extends React.Component {
         return (
             <div className="sidebar">
                 <Button 
-                    text="New Todo" 
+                    text="New To-Do" 
                     onClick={this.props.onNewTodo}
                 />
                 <div className="sidebar-content-container">
